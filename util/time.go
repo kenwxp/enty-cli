@@ -76,7 +76,7 @@ func GetValuedBlockRange(orderTimeStr string, validPlanStr string, periodStr str
 	valid := orderTime.AddDate(0, 0, validPlan)
 	//周期 结束时间
 	period, _ := strconv.Atoi(periodStr)
-	periodEnd := valid.AddDate(0, 0, period)
+	periodEnd := valid.AddDate(0, 0, period-1)
 	//今天时间
 	statTime, _ := time.ParseInLocation("2006-01-02 15:04:05", statTimeStr+" 12:00:00", cstSh)
 	//今天前推180天

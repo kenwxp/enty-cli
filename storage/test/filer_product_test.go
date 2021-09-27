@@ -11,7 +11,7 @@ import (
 )
 
 func TestInsertFilerProduct(t *testing.T) {
-	db, err := storage.NewDatabase(true)
+	db, err := storage.NewDatabase()
 	fmt.Println(db)
 	fmt.Println(err)
 	err = db.WithTransaction(func(txn *sql.Tx) error {
@@ -39,7 +39,7 @@ func TestInsertFilerProduct(t *testing.T) {
 	fmt.Println(err)
 }
 func TestSelectProductInfoById(t *testing.T) {
-	db, err := storage.NewDatabase(true)
+	db, err := storage.NewDatabase()
 	fmt.Println(db)
 	fmt.Println(err)
 

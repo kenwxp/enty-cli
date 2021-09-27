@@ -7,8 +7,7 @@ import (
 )
 
 func main() {
-	var localhost bool
-	db, err := storage.NewDatabase(localhost)
+	db, err := storage.NewDatabase()
 	if err != nil {
 		fmt.Println("err:", err)
 		panic("db failed init")

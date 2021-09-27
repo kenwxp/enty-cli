@@ -244,7 +244,7 @@ func (s *filerOrderIncomeStatements) insertFilerOrderIncome(ctx context.Context,
 	return
 }
 func (s *filerOrderIncomeStatements) selectFilerOrderIncomeByOrderId(ctx context.Context, txn *sql.Tx, orderId string) (orderIncome types.FilerOrderIncome, err error) {
-	rows, err := TxStmt(txn, s.selectFilerOrderIncomeByOrderIdStmt).QueryContext(ctx, orderId)
+	rows, err := util.TxStmt(txn, s.selectFilerOrderIncomeByOrderIdStmt).QueryContext(ctx, orderId)
 	defer rows.Close()
 	for rows.Next() {
 		if err = rows.Scan(
@@ -299,7 +299,7 @@ func (s *filerOrderIncomeStatements) selectStatisticOrderIncomeByNodeId(ctx cont
 }
 
 func (s *filerOrderIncomeStatements) deleteFilerOrderIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string, nodeId string) (err error) {
-	stmt := TxStmt(txn, s.deleteFilerOrderIncomeFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteFilerOrderIncomeFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime, nodeId)
 	if err != nil {
 		return err
@@ -309,7 +309,7 @@ func (s *filerOrderIncomeStatements) deleteFilerOrderIncomeFromStatTime(ctx cont
 
 func (s *filerOrderIncomeStatements) selectFilerOrderListWithIncomeInfoByFilerIdAndOrderState(ctx context.Context, txn *sql.Tx, filerId string, orderState string) ([]types.FilerOrderShow, error) {
 	var list []types.FilerOrderShow
-	row, err := TxStmt(txn, s.selectFilerOrderListWithIncomeInfoByFilerIdAndOrderStateStmt).QueryContext(ctx, filerId, orderState)
+	row, err := util.TxStmt(txn, s.selectFilerOrderListWithIncomeInfoByFilerIdAndOrderStateStmt).QueryContext(ctx, filerId, orderState)
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectFilerOrderListWithIncomeInfoByFilerIdAndOrderState error:", err)

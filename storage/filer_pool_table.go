@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"entysquare/enty-cli/storage/types"
+	"entysquare/enty-cli/util"
 )
 
 //goland:noinspection SqlNoDataSourceInspection
@@ -107,7 +108,7 @@ func (s *filerPoolStatements) selectFilerPool() ([]types.FilerPool, error) {
 
 func (s *filerPoolStatements) selectAllFilerPool(ctx context.Context, txn *sql.Tx) ([]types.FilerPool, error) {
 	var list []types.FilerPool
-	row, err := TxStmt(txn, s.selectFilerPoolStmt).QueryContext(ctx)
+	row, err := util.TxStmt(txn, s.selectFilerPoolStmt).QueryContext(ctx)
 	defer row.Close()
 	if err != nil {
 		return nil, err
@@ -131,7 +132,7 @@ func (s *filerPoolStatements) selectAllFilerPool(ctx context.Context, txn *sql.T
 	return list, nil
 }
 func (s *filerPoolStatements) selectHtFilerPool(ctx context.Context, txn *sql.Tx) (htPool types.FilerPool, err error) {
-	rows, err := TxStmt(txn, s.selectHtFilerPoolStmt).QueryContext(ctx)
+	rows, err := util.TxStmt(txn, s.selectHtFilerPoolStmt).QueryContext(ctx)
 	if err != nil {
 		return types.FilerPool{}, err
 

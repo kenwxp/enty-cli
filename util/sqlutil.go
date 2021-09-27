@@ -42,3 +42,9 @@ func EndTransactionWithCheck(txn Transaction, succeeded *bool, err *error) {
 		*err = e
 	}
 }
+func TxStmt(transaction *sql.Tx, statement *sql.Stmt) *sql.Stmt {
+	if transaction != nil {
+		statement = transaction.Stmt(statement)
+	}
+	return statement
+}

@@ -23,7 +23,7 @@ func FilProfitScanning() {
 	var maxHeight int64
 
 	//获取Database
-	db, err := storage.NewDatabase(true)
+	db, err := storage.NewDatabase()
 	if err != nil {
 		panic("[panic!]FilProfitScanning db err 001")
 	}

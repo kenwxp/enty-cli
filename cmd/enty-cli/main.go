@@ -25,8 +25,9 @@ func main() {
 						println("amount required")
 						return nil
 					}
-					amount := c.Args().Get(0)
-					println("add order " + amount + " nanofil")
+					filerId := c.Args().Get(0)
+					amount := c.Args().Get(1)
+					println("add order " + amount + " nanofil for" + filerId)
 					return nil
 				},
 			},
@@ -39,8 +40,9 @@ func main() {
 						println("amount required")
 						return nil
 					}
-					amount := c.Args().Get(0)
-					println("withdraw  " + amount + " nanofil")
+					filerId := c.Args().Get(0)
+					amount := c.Args().Get(1)
+					println("withdraw  " + amount + " nanofil for" + filerId)
 					return nil
 				},
 			},

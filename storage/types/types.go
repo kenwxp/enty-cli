@@ -1,9 +1,12 @@
 package types
 
-type Account struct {
-	FilerID int64
-	PayID   int64
-	Token   string
+type FilerAccountInfo struct {
+	FilerId   string
+	FilerName string
+	RegTime   string
+	Mobile    string
+	Email     string
+	IsValid   string
 }
 
 //爆块信息临时表

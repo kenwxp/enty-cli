@@ -169,7 +169,7 @@ func (s *filerOrderStatements) selectAllInProgressOrderByNodeId(ctx context.Cont
 
 func (s *filerOrderStatements) updateFilerOrderState(ctx context.Context, txn *sql.Tx, orderState string, orderId string) (err error) {
 	updateTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
-	stmt := TxStmt(txn, s.updateFilerOrderStateStmt)
+	stmt := util.TxStmt(txn, s.updateFilerOrderStateStmt)
 	r, err := stmt.ExecContext(ctx, orderState, updateTime, orderId)
 	if err != nil {
 		return err
@@ -180,7 +180,7 @@ func (s *filerOrderStatements) updateFilerOrderState(ctx context.Context, txn *s
 	return
 }
 func (s *filerOrderStatements) selectOrderListByFilerId(ctx context.Context, txn *sql.Tx, state int, filerId int64) (list map[string]types.FilerOrder, err error) {
-	rows, err := TxStmt(txn, s.selectOrderByFilerIdStmt).QueryContext(ctx, state, filerId)
+	rows, err := util.TxStmt(txn, s.selectOrderByFilerIdStmt).QueryContext(ctx, state, filerId)
 	defer rows.Close()
 	if err != nil {
 		return nil, err
@@ -228,7 +228,7 @@ func (s *filerOrderStatements) insertFilerOrder(ctx context.Context, txn *sql.Tx
 
 func (s *filerOrderStatements) selectInvalidOrderListByFilerId(ctx context.Context, txn *sql.Tx, filerId string) ([]types.FilerOrderShow, error) {
 	var list []types.FilerOrderShow
-	row, err := TxStmt(txn, s.selectInvalidOrderListByFilerIdStmt).QueryContext(ctx, filerId)
+	row, err := util.TxStmt(txn, s.selectInvalidOrderListByFilerIdStmt).QueryContext(ctx, filerId)
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectInvalidOrderListByFilerId error:", err)

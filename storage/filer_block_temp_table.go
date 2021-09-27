@@ -140,7 +140,7 @@ func (s *filerBlockTempStatements) selectStatisticBlockInfoByNodeId(ctx context.
 
 func (s *filerBlockTempStatements) updateFilerBlockTempState(ctx context.Context, txn *sql.Tx, statTime time.Time, nodeId string) error {
 	updateTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
-	stmt := TxStmt(txn, s.updateFilerBlockTempStateStmt)
+	stmt := util.TxStmt(txn, s.updateFilerBlockTempStateStmt)
 	r, err := stmt.ExecContext(ctx, updateTime, statTime.Unix(), statTime.AddDate(0, 0, 1).Unix(), nodeId)
 
 	if err != nil {

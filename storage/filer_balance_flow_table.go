@@ -75,7 +75,7 @@ func (s *filerBalanceFlowStatements) prepare(db *sql.DB) (err error) {
 func (s *filerBalanceFlowStatements) selectStatisticBalanceFlowListByFilerId(ctx context.Context, txn *sql.Tx, filerId string, statTimeStr string) ([]types.FilerBalanceFlow, error) {
 	var list []types.FilerBalanceFlow
 	statTime := util.TimeStringToTime(statTimeStr, "00:00:00", "")
-	row, err := TxStmt(txn, s.selectStatisticBalanceFlowListByFilerIdStmt).QueryContext(ctx, filerId, statTime.Unix(), statTime.AddDate(0, 0, 1).Unix())
+	row, err := util.TxStmt(txn, s.selectStatisticBalanceFlowListByFilerIdStmt).QueryContext(ctx, filerId, statTime.Unix(), statTime.AddDate(0, 0, 1).Unix())
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectStatisticBalanceFlowListByFilerId error:", err)
@@ -118,7 +118,7 @@ func (s *filerBalanceFlowStatements) insertBalanceFlow(ctx context.Context, txn 
 
 func (s *filerBalanceFlowStatements) deleteBalanceFlowByOperType(ctx context.Context, txn *sql.Tx, filerId string, statTimeStr string, operType string) (err error) {
 	statTime := util.TimeStringToTime(statTimeStr, "00:00:00", "")
-	stmt := TxStmt(txn, s.deleteBalanceFlowByOperTypeStmt)
+	stmt := util.TxStmt(txn, s.deleteBalanceFlowByOperTypeStmt)
 	r, err := stmt.ExecContext(ctx, filerId, statTime.Unix(), statTime.AddDate(0, 0, 1).Unix(), operType)
 	if err != nil {
 		return err

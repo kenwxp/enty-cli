@@ -185,7 +185,7 @@ func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeByStatTime(ctx co
 
 func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeByFilerId(ctx context.Context, txn *sql.Tx, filerId string) ([]types.FilerBalanceIncome, error) {
 	var list []types.FilerBalanceIncome
-	row, err := TxStmt(txn, s.selectFilerBalanceIncomeByFilerIdStmt).QueryContext(ctx, filerId)
+	row, err := util.TxStmt(txn, s.selectFilerBalanceIncomeByFilerIdStmt).QueryContext(ctx, filerId)
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectFilerBalanceIncomeByFilerId error:", err)
@@ -220,7 +220,7 @@ func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeByFilerId(ctx con
 
 func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeListByFilerId(ctx context.Context, txn *sql.Tx, filerId string) ([]types.FilerBalanceIncome, error) {
 	var list []types.FilerBalanceIncome
-	row, err := TxStmt(txn, s.selectFilerBalanceIncomeListByFilerIdStmt).QueryContext(ctx, filerId)
+	row, err := util.TxStmt(txn, s.selectFilerBalanceIncomeListByFilerIdStmt).QueryContext(ctx, filerId)
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectFilerBalanceIncomeByFilerId error:", err)
@@ -276,7 +276,7 @@ func (s *filerBalanceIncomeStatements) insertFilerBalanceIncome(ctx context.Cont
 }
 
 func (s *filerBalanceIncomeStatements) deleteFilerBalanceIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string) (err error) {
-	stmt := TxStmt(txn, s.deleteFilerBalanceIncomeFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteFilerBalanceIncomeFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime)
 	if err != nil {
 		return err

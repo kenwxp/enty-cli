@@ -108,7 +108,7 @@ func (s *filerStatControlStatements) prepare(db *sql.DB) (err error) {
 
 func (s *filerStatControlStatements) selectStatControlInfo(ctx context.Context, txn *sql.Tx, statType string, statTimeStr string, nodeId string) (*types.FilerStatControl, error) {
 	var statControl types.FilerStatControl
-	err := TxStmt(txn, s.selectStatControlInfoStmt).
+	err := util.TxStmt(txn, s.selectStatControlInfoStmt).
 		QueryRowContext(ctx, statType, statTimeStr, nodeId).
 		Scan(
 			&statControl.StatType,
@@ -156,7 +156,7 @@ func (s *filerStatControlStatements) insertStatControlInfo(ctx context.Context, 
 	statControl.CreateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
 	statControl.UpdateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
 	statControl.StatState = "0"
-	r, err := TxStmt(txn, s.insertStatControlInfoStmt).
+	r, err := util.TxStmt(txn, s.insertStatControlInfoStmt).
 		ExecContext(ctx, //uuid
 			statControl.StatType,
 			statControl.StatTime,
@@ -176,7 +176,7 @@ func (s *filerStatControlStatements) insertStatControlInfo(ctx context.Context, 
 
 func (s *filerStatControlStatements) updateStatControlInfo(ctx context.Context, txn *sql.Tx, statControl *types.FilerStatControl) (err error) {
 	statControl.UpdateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
-	stmt := TxStmt(txn, s.updateStatControlInfoStmt)
+	stmt := util.TxStmt(txn, s.updateStatControlInfoStmt)
 	r, err := stmt.ExecContext(ctx,
 		statControl.StatState,
 		statControl.UpdateTime,
@@ -195,7 +195,7 @@ func (s *filerStatControlStatements) updateStatControlInfo(ctx context.Context, 
 }
 
 func (s *filerStatControlStatements) deleteStatControlFromStatTimeByNodeId(ctx context.Context, txn *sql.Tx, statTime string, nodeId string) (err error) {
-	stmt := TxStmt(txn, s.deleteStatControlFromStatTimeByNodeIdStmt)
+	stmt := util.TxStmt(txn, s.deleteStatControlFromStatTimeByNodeIdStmt)
 	_, err = stmt.ExecContext(ctx, statTime, nodeId)
 	if err != nil {
 		return err
@@ -203,7 +203,7 @@ func (s *filerStatControlStatements) deleteStatControlFromStatTimeByNodeId(ctx c
 	return
 }
 func (s *filerStatControlStatements) deleteAllStatControlFromStatTime(ctx context.Context, txn *sql.Tx, statTime string) (err error) {
-	stmt := TxStmt(txn, s.deleteAllStatControlFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteAllStatControlFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime)
 	if err != nil {
 		return err

@@ -20,8 +20,8 @@ const filerProductSchema = `
 		price         TEXT,
 		pledge_max	  TEXT,
 		service_rate  TEXT,
-		node1		  TEXT,
-		node2		  TEXT,
+		note1		  TEXT,
+		note2		  TEXT,
 		shelve_time	  TEXT,
 		create_time   TEXT,
 		update_time	  TEXT,
@@ -38,8 +38,8 @@ const filerProductSchema = `
 	comment on column filer_product.price is '每T质押';
 	comment on column filer_product.pledge_max is '质押需求额';
 	comment on column filer_product.service_rate is '服务费率';
-	comment on column filer_product.node1 is '说明（基本规则）';
-	comment on column filer_product.node2 is '说明（联合挖矿说明）';
+	comment on column filer_product.note1 is '说明（基本规则）';
+	comment on column filer_product.note2 is '说明（联合挖矿说明）';
 	comment on column filer_product.shelve_time is '上架时间';
 	comment on column filer_product.create_time is '创建时间';
 	comment on column filer_product.update_time is '更新时间';
@@ -49,7 +49,7 @@ const filerProductSchema = `
 `
 const insertFilerProductSQL = "" +
 	" INSERT INTO filer_product " +
-	" (product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,node1,node2,shelve_time,create_time,update_time,product_state,is_valid) " +
+	" (product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,note1,note2,shelve_time,create_time,update_time,product_state,is_valid) " +
 	" VALUES " +
 	" ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) "
 const updateFilerProductStateSql = "" +
@@ -58,13 +58,13 @@ const updateFilerProductStateSql = "" +
 	" is_valid = $3 " +
 	" where product_id = $1 "
 const selectProductInfoByProductIdSql = "" +
-	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,node1,node2,shelve_time,create_time,update_time,product_state,is_valid" +
+	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,note1,note2,shelve_time,create_time,update_time,product_state,is_valid" +
 	" FROM filer_product WHERE product_id = $1 and is_valid='0'"
 const selectProductListByCurIDSql = "" +
-	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,node1,node2,shelve_time,create_time,update_time,product_state,is_valid" +
+	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,note1,note2,shelve_time,create_time,update_time,product_state,is_valid" +
 	" FROM filer_product WHERE cur_id = $1 and is_valid='0'"
 const selectProductListByStateSql = "" +
-	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,node1,node2,shelve_time,create_time,update_time,product_state,is_valid" +
+	"select product_id,product_name,node_id,cur_id,period,valid_plan,price,pledge_max,service_rate,note1,note2,shelve_time,create_time,update_time,product_state,is_valid" +
 	" FROM filer_product WHERE product_state = $1 and is_valid='0'"
 
 //const setUserAddressByPhoneNumSQL = "" +
@@ -129,7 +129,7 @@ func (s *filerProductStatements) insertFilerProduct(ctx context.Context, txn *sq
 	return
 }
 func (s *filerProductStatements) updateProductState(ctx context.Context, txn *sql.Tx, productId string, productState string, isValid string) (err error) {
-	stmt := TxStmt(txn, s.updateFilerProductStateStmt)
+	stmt := util.TxStmt(txn, s.updateFilerProductStateStmt)
 	_, err = stmt.ExecContext(ctx, productId, productState, isValid)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (s *filerProductStatements) updateProductState(ctx context.Context, txn *sq
 	return
 }
 func (s *filerProductStatements) selectProductInfoByProductID(ctx context.Context, txn *sql.Tx, productId string) (product types.FilerProduct, err error) {
-	rows, err := TxStmt(txn, s.selectProductInfoByProductIdStmt).QueryContext(ctx, productId)
+	rows, err := util.TxStmt(txn, s.selectProductInfoByProductIdStmt).QueryContext(ctx, productId)
 	defer rows.Close()
 	for rows.Next() {
 		if err = rows.Scan(
@@ -166,7 +166,7 @@ func (s *filerProductStatements) selectProductInfoByProductID(ctx context.Contex
 	return product, rows.Err()
 }
 func (s *filerProductStatements) selectProductListByCurId(ctx context.Context, txn *sql.Tx, curId string) (list map[string]types.FilerProduct, err error) {
-	rows, err := TxStmt(txn, s.selectProductListByCurIDStmt).QueryContext(ctx, curId)
+	rows, err := util.TxStmt(txn, s.selectProductListByCurIDStmt).QueryContext(ctx, curId)
 	defer rows.Close()
 	if err != nil {
 		return nil, err
@@ -200,7 +200,7 @@ func (s *filerProductStatements) selectProductListByCurId(ctx context.Context, t
 	return
 }
 func (s *filerProductStatements) selectProductListByState(ctx context.Context, txn *sql.Tx, state string) (list map[string]types.FilerProduct, err error) {
-	rows, err := TxStmt(txn, s.selectProductListByStateStmt).QueryContext(ctx, state)
+	rows, err := util.TxStmt(txn, s.selectProductListByStateStmt).QueryContext(ctx, state)
 	defer rows.Close()
 	if err != nil {
 		return nil, err

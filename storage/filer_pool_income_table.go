@@ -250,7 +250,7 @@ func (s *filerPoolIncomeStatements) selectFilerPoolIncomeByNodeIdLast(ctx contex
 }
 
 func (s *filerPoolIncomeStatements) deleteFilerPoolIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string, nodeId string) (err error) {
-	stmt := TxStmt(txn, s.deleteFilerPoolIncomeFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteFilerPoolIncomeFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime, nodeId)
 	if err != nil {
 		return err

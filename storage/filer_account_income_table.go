@@ -135,7 +135,7 @@ func (s *filerAccountIncomeStatements) prepare(db *sql.DB) (err error) {
 	return
 }
 func (s *filerAccountIncomeStatements) selectFilerAccountIncomeByFilerId(ctx context.Context, txn *sql.Tx, filerId int64) (list map[string]types.FilerAccountIncome, err error) {
-	rows, err := TxStmt(txn, s.selectFilerAccountIncomeByFilerIdStmt).QueryContext(ctx, filerId)
+	rows, err := util.TxStmt(txn, s.selectFilerAccountIncomeByFilerIdStmt).QueryContext(ctx, filerId)
 	defer rows.Close()
 	if err != nil {
 		return nil, err
@@ -224,7 +224,7 @@ func (s *filerAccountIncomeStatements) insertFilerAccountIncome(ctx context.Cont
 }
 
 func (s *filerAccountIncomeStatements) deleteFilerAccountIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string, nodeId string) (err error) {
-	stmt := TxStmt(txn, s.deleteFilerAccountIncomeFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteFilerAccountIncomeFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime, nodeId)
 	if err != nil {
 		return err

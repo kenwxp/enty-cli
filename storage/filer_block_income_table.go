@@ -197,7 +197,7 @@ func (s *filerBlockIncomeStatements) selectFilerBlockIncomeByStatTimeAndNodeId(c
 	return &f
 }
 func (s *filerBlockIncomeStatements) deleteFilerBlockIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string, nodeId string) (err error) {
-	stmt := TxStmt(txn, s.deleteFilerBlockIncomeFromStatTimeStmt)
+	stmt := util.TxStmt(txn, s.deleteFilerBlockIncomeFromStatTimeStmt)
 	_, err = stmt.ExecContext(ctx, statTime, nodeId)
 	if err != nil {
 		return err

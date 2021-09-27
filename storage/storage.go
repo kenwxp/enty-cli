@@ -12,16 +12,16 @@ import (
 
 const (
 	host     = "127.0.0.1"
-	port     = 5432
-	user     = "backend"
-	password = "filer666"
-	dbname   = "filer"
+	port     = 5532
+	user     = "entycli"
+	password = "entycli666"
+	dbname   = "entycli"
 )
 
 // Database represents an account database
 type Database struct {
 	Db                 *sql.DB
-	accounts           accountsStatements
+	filerAccount       filerAccountsStatements
 	filerBlockIncome   filerBlockIncomeStatements
 	filerBlockTemp     filerBlockTempStatements
 	filerProduct       filerProductStatements
@@ -40,15 +40,11 @@ func (d *Database) WithTransaction(fn func(txn *sql.Tx) error) (err error) {
 }
 
 // NewDatabase creates a new accounts and profiles database
-func NewDatabase(localhost bool) (*Database, error) {
+func NewDatabase() (*Database, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	if localhost {
-		psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
-			"password=%s dbname=%s sslmode=disable",
-			"127.0.0.1", port, user, password, dbname)
-	}
+
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
@@ -59,11 +55,11 @@ func NewDatabase(localhost bool) (*Database, error) {
 
 	// Create tables before executing migrations so we don't fail if the table is missing,
 	// and THEN prepare statements so we don't fail due to referencing new columns
-	if err = d.accounts.execSchema(db); err != nil {
+	if err = d.filerAccount.execSchema(db); err != nil {
 		fmt.Print("err1:", err)
 		return nil, err
 	}
-	if err = d.accounts.prepare(db); err != nil {
+	if err = d.filerAccount.prepare(db); err != nil {
 		fmt.Print("err1:", err)
 		return nil, err
 	}
@@ -162,32 +158,8 @@ func NewDatabase(localhost bool) (*Database, error) {
 	return d, nil
 }
 
-func (d *Database) CreateAccount(ctx context.Context, txn *sql.Tx, payID int64, token string) (err error) {
-	err = d.accounts.insertAccount(ctx, txn, payID, token)
-	if err != nil {
-		return err
-	}
-	return
-}
-
-func (d *Database) UpdateAccountToken(ctx context.Context, txn *sql.Tx, filerID int64, token string) (err error) {
-	err = d.accounts.updateAccountToken(ctx, txn, filerID, token)
-	if err != nil {
-		return err
-	}
-	return
-}
-
-func (d *Database) SelectAccountByPayID(ctx context.Context, txn *sql.Tx, payID int64) (account *types.Account, err error) {
-	account, err = d.accounts.selectAccountByPayID(ctx, txn, payID)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func (d *Database) SelectAccountByToken(ctx context.Context, txn *sql.Tx, token string) (account *types.Account, err error) {
-	account, err = d.accounts.selectAccountByToken(ctx, txn, token)
+func (d *Database) SelectAccountByToken(ctx context.Context, txn *sql.Tx, name string) (account *types.FilerAccountInfo, err error) {
+	account, err = d.filerAccount.selectAccountByName(ctx, txn, name)
 	if err != nil {
 		return
 	}
