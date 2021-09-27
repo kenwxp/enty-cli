@@ -8,7 +8,6 @@ import (
 
 func main() {
 	var localhost bool
-
 	db, err := storage.NewDatabase(localhost)
 	if err != nil {
 		fmt.Println("err:", err)
