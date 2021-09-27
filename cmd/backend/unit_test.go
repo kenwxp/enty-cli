@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"entysquare/filer-backend/storage/types"
-	"entysquare/filer-backend/util"
+	"entysquare/enty-cli/storage/types"
+	"entysquare/enty-cli/util"
 	"fmt"
 	"strconv"
 	"testing"

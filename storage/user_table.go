@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
-	"entysquare/filer-backend/storage/types"
+	"entysquare/enty-cli/storage/types"
 )
 
 //CREATE SEQUENCE IF NOT EXISTS user_seq START 1;

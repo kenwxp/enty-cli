@@ -7,35 +7,6 @@ import (
 	"strconv"
 )
 
-func CalculateInt64(x int64, y int64, operator string) (i int64) {
-	switch operator {
-	case "add":
-		a := big.NewInt(x)
-		b := big.NewInt(y)
-		z := a.Add(a, b)
-		i := z.Int64()
-		return i
-	case "sub":
-		a := big.NewInt(x)
-		b := big.NewInt(y)
-		z := a.Sub(a, b)
-		i := z.Int64()
-		return i
-	case "mul":
-		a := big.NewInt(x)
-		b := big.NewInt(y)
-		z := a.Mul(a, b)
-		i := z.Int64()
-		return i
-	case "div":
-		a := big.NewInt(x)
-		b := big.NewInt(y)
-		z := a.Div(a, b)
-		i := z.Int64()
-		return i
-	}
-	return i
-}
 func CalculateString(x string, y string, operator string) (i string) {
 	if x == "" {
 		x = "0"
@@ -155,49 +126,6 @@ func CalculateString(x string, y string, operator string) (i string) {
 
 	return i
 }
-func Digit(x string, operator string) (i string, definedErr *MessageError) {
-	unit := new(big.Float)
-	a := new(big.Float)
-	bf, ok := a.SetString(x)
-	if !ok {
-		definedErr := NewMsgError(4, "error in trans string into bigint")
-		return "", definedErr
-	}
-	switch operator {
-	case "div18":
-		unit.SetString("1000000000000000000")
-		bf.Quo(bf, unit)
-		i = bf.Text('f', 18)
-		return i, definedErr
-	case "div2":
-		unit.SetString("100")
-		bf.Quo(bf, unit)
-		i = bf.Text('f', 2)
-		return i, definedErr
-	case "div9":
-		unit.SetString("1000000000")
-		bf.Quo(bf, unit)
-		i = bf.Text('f', 18)
-		return i, definedErr
-	case "mul2":
-		unit.SetString("100")
-		bf.Mul(bf, unit)
-		i = bf.Text('f', 0)
-		return i, definedErr
-	case "mul9":
-		unit.SetString("1000000000")
-		bf.Mul(bf, unit)
-		i = bf.Text('f', 0)
-		return i, definedErr
-	case "mul18":
-		unit.SetString("1000000000000000000")
-		bf.Mul(bf, unit)
-		i = bf.Text('f', 0)
-		return i, definedErr
-	}
-
-	return i, definedErr
-}
 
 /*
 	addition
@@ -299,14 +227,6 @@ func MultiplicationPrec0(args ...interface{}) string {
 		}
 	}
 	return strconv.FormatFloat(num, 'f', 0, 64)
-}
-
-func StrNanoFILToFilStr2(nanoFilStr string) string {
-	float, err := strconv.ParseFloat(nanoFilStr, 64)
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("%.2f", float/1000000000.0)
 }
 
 func StrNanoFILToFilStr(nanoFilStr string, num string) string {

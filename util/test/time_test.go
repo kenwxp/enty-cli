@@ -1,7 +1,7 @@
 package main
 
 import (
-	"entysquare/filer-backend/util"
+	"entysquare/enty-cli/util"
 	"fmt"
 	"testing"
 )

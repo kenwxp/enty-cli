@@ -1,7 +1,7 @@
 package main
 
 import (
-	"entysquare/filer-backend/storage"
+	"entysquare/enty-cli/storage"
 	"fmt"
 	_ "github.com/lib/pq"
 	"testing"

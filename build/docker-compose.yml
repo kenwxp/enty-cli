@@ -5,11 +5,11 @@ services:
 
   filer:
     image: postgres
-    container_name: filer-db
+    container_name: entycli-db
     restart: always
     ports:
-      - 5432:5432
+      - 5532:5432
     environment:
-      POSTGRES_PASSWORD: filer666
-      POSTGRES_DB: filer
-      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: entycli666
+      POSTGRES_DB: entycli
+      POSTGRES_USER: entycli

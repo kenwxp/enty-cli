@@ -1,9 +1,9 @@
 package chain
 
 import (
-	"entysquare/filer-backend/chain/filecoin"
-	"entysquare/filer-backend/storage"
-	"entysquare/filer-backend/util"
+	"entysquare/enty-cli/chain/filecoin"
+	"entysquare/enty-cli/storage"
+	"entysquare/enty-cli/util"
 	"fmt"
 	_ "github.com/lib/pq"
 	"strconv"

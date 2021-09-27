@@ -1,7 +1,7 @@
 package main
 
 import (
-	"entysquare/filer-backend/storage/types"
+	"entysquare/enty-cli/storage/types"
 	"fmt"
 	_ "github.com/lib/pq"
 	uuid "github.com/satori/go.uuid"

@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
-	"entysquare/filer-backend/storage"
-	"entysquare/filer-backend/storage/types"
+	"entysquare/enty-cli/storage"
+	"entysquare/enty-cli/storage/types"
 	"fmt"
 	_ "github.com/lib/pq"
 	"testing"
