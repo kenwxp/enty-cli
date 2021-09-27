@@ -1,0 +1,15 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  filer:
+    image: postgres
+    container_name: filer-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: filer666
+      POSTGRES_DB: filer
+      POSTGRES_USER: backend
