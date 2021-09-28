@@ -244,7 +244,7 @@ func StrNanoFILToFilStr(nanoFilStr string, num string) string {
 	nanoFilStr = string(rs[0:rmBit])
 	float, err := strconv.ParseFloat(nanoFilStr, 64)
 	if err != nil {
-		return ""
+		return "0"
 	}
 	pow := math.Pow10(spec)
 	return fmt.Sprintf("%."+num+"f", float/pow)

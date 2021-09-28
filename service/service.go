@@ -12,15 +12,14 @@ import (
 	"time"
 )
 
-func InsertOrder(db *storage.Database, name string, amount string) error {
+func InsertOrder(db *storage.Database, name string, hold string) error {
 	ctx := context.TODO()
 	filerId, err := GetFilerIdByName(db, ctx, name)
 	if err != nil {
 		println("InsertOrder => GetFilerIdByName => err:", err)
 		return err
 	}
-	nanoAmount := util.FSToIS(util.CalculateString(amount, "1000000000", "mulBigF")) // 转化为nanoFIl
-	holdPower := util.CalculateString(nanoAmount, "5160000000", "divBigF")           // 设置算力售价为5.16Fil/T
+	nanoAmount := util.FSToIS(util.CalculateString(hold, "5160000000", "mulBigF")) // 设置算力售价为5.16Fil/T
 	createTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
 	updateTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
 	validTime := strconv.FormatInt(util.TimeNow().AddDate(0, 0, 1).Unix(), 10) //设置T+1生效
@@ -29,7 +28,7 @@ func InsertOrder(db *storage.Database, name string, amount string) error {
 		FilerId:    filerId,
 		PayFlow:    "",
 		ProductId:  "91fb8ea2-d435-4709-b933-1f7057b7f9ef", //使用确定产品下单
-		HoldPower:  holdPower,
+		HoldPower:  hold,
 		PayAmount:  nanoAmount,
 		OrderTime:  createTime,
 		UpdateTime: updateTime,
@@ -176,13 +175,27 @@ func QueryIncomeList(db *storage.Database) error {
 		return err
 	}
 	if len(balanceList) > 0 {
-		fmt.Println("|\t用户名\t|\t质押金额\t|\t持有算力\t|\t总收益\t|\t已释放收益\t|\t可用余额\t|\t修改时间\t|")
+		fmt.Println("|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|")
+		fmt.Println("|\t用户名\t|\t持有算力\t|\t总收益\t|\t已释放收益\t|\t可用余额\t|\t修改时间\t|")
+		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
+		sumPower := "0"
+		sumTotalIncome := "0"
+		sumAvailable := "0"
+		sumBalance := "0"
+
 		for _, balanceInfo := range balanceList {
-			pledge := util.StrNanoFILToFilStr(balanceInfo.PledgeSum, "4")
 			power := balanceInfo.HoldPower
+			sumPower = util.CalculateString(sumPower, power, "addBigFH")
+
 			totalIncome := util.StrNanoFILToFilStr(balanceInfo.TotalIncome, "4")
+			sumTotalIncome = util.FSToIS(util.CalculateString(sumTotalIncome, balanceInfo.TotalIncome, "addBigFH"))
+
 			available := util.StrNanoFILToFilStr(balanceInfo.TotalAvailableIncome, "4")
+			sumAvailable = util.FSToIS(util.CalculateString(sumAvailable, balanceInfo.TotalAvailableIncome, "addBigFH"))
+
 			balance := util.StrNanoFILToFilStr(balanceInfo.Balance, "4")
+			sumBalance = util.FSToIS(util.CalculateString(sumBalance, balanceInfo.Balance, "addBigFH"))
+
 			updateTs, err := strconv.ParseInt(balanceInfo.UpdateTime, 10, 64)
 			if err != nil {
 				updateTs = 0
@@ -191,13 +204,21 @@ func QueryIncomeList(db *storage.Database) error {
 
 			fmt.Println("" +
 				"|\t" + balanceInfo.FilerName + "\t" +
-				"|\t" + pledge + "\t" +
 				"|\t" + power + "\t" +
 				"|\t" + totalIncome + "\t" +
 				"|\t" + available + "\t" +
 				"|\t" + balance + "\t" +
 				"|\t" + updateTime + "\t|")
 		}
+		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
+		fmt.Println("" +
+			"|\t" + "SUM:" + "\t" +
+			"|\t" + sumPower + "\t" +
+			"|\t" + util.StrNanoFILToFilStr(sumTotalIncome, "4") + "\t" +
+			"|\t" + util.StrNanoFILToFilStr(sumAvailable, "4") + "\t" +
+			"|\t" + util.StrNanoFILToFilStr(sumBalance, "4") + "\t" +
+			"|\t" + "" + "\t|")
+		fmt.Println("|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|")
 	} else {
 		fmt.Println(" ------> no result <------", err)
 	}

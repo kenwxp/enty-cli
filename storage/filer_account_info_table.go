@@ -21,7 +21,7 @@ const filerUserSchema = `
 `
 
 const selectAccountByNameSQL = "" +
-	"SELECT filer_id , filer_name , reg_time, mobile, email, is_valid  FROM filer_account_info WHERE filer_name = $1 and is_valid = '0' "
+	"SELECT filer_id , filer_name , reg_time, mobile, email, is_valid  FROM filer_account_info WHERE upper(filer_name) = upper($1) and is_valid = '0' "
 
 type filerAccountsStatements struct {
 	selectAccountByNameStmt *sql.Stmt

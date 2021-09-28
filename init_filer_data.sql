@@ -51,9 +51,6 @@ INSERT INTO filer_account_info(filer_id, filer_name, reg_time, mobile, email, is
 VALUES ('482f0608-db00-4a63-82d1-8df40688aef4', 'Grace',
         EXTRACT(epoch FROM to_timestamp('20210927111111', 'YYYYMMDDHHMISS')), '', '', '0');
 
-INSERT INTO filer_account_info(filer_id, filer_name, reg_time, mobile, email, is_valid)
-VALUES ('50c47f49-8851-4fc2-9754-8894303d268d', 'SUM',
-        EXTRACT(epoch FROM to_timestamp('20210927111111', 'YYYYMMDDHHMISS')), '', '', '0');
 
 -- 81882469-1840-46fc-ae37-7d252c885193,Dylan       Dylan	    440	    85.47
 INSERT INTO filer_order
@@ -184,19 +181,6 @@ VALUES (gen_random_uuid(), '482f0608-db00-4a63-82d1-8df40688aef4', gen_random_uu
         '91fb8ea2-d435-4709-b933-1f7057b7f9ef',
         '38.44', --算力  920 T
         '198330000000',-- 6625 FIL
-        EXTRACT(epoch FROM to_timestamp('20210924111111', 'YYYYMMDDHHMISS')), --下单时间
-        EXTRACT(epoch FROM to_timestamp('20210924111111', 'YYYYMMDDHHMISS')), --修改时间
-        EXTRACT(epoch FROM to_timestamp('20210925111111', 'YYYYMMDDHHMISS')), --生效时间
-        EXTRACT(epoch FROM to_timestamp('20230318111111', 'YYYYMMDDHHMISS')), --540天
-        '1');
--- 50c47f49-8851-4fc2-9754-8894303d268d,SUM         SUM	        2187.78	425
-INSERT INTO filer_order
-(order_id, filer_id, pay_flow, product_id, hold_power, pay_amount, order_time, update_time, valid_time, end_time,
- order_state)
-VALUES (gen_random_uuid(), '50c47f49-8851-4fc2-9754-8894303d268d', gen_random_uuid(),
-        '91fb8ea2-d435-4709-b933-1f7057b7f9ef',
-        '425', --算力  920 T
-        '2187780000000',-- 6625 FIL
         EXTRACT(epoch FROM to_timestamp('20210924111111', 'YYYYMMDDHHMISS')), --下单时间
         EXTRACT(epoch FROM to_timestamp('20210924111111', 'YYYYMMDDHHMISS')), --修改时间
         EXTRACT(epoch FROM to_timestamp('20210925111111', 'YYYYMMDDHHMISS')), --生效时间

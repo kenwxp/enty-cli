@@ -28,7 +28,7 @@ func main() {
 					}
 					filerName := c.Args().Get(0)
 					amount := c.Args().Get(1)
-					println("add order " + amount + " nanofil for" + filerName)
+					println("try add order " + amount + " Tib for " + filerName + "...")
 					err := service.InsertOrder(db, filerName, amount)
 					if err != nil {
 						println("fail to add order")
@@ -49,6 +49,7 @@ func main() {
 					}
 					filerName := c.Args().Get(0)
 					amount := c.Args().Get(1)
+					println("try withdraw " + amount + " FIL for " + filerName + "...")
 					err := service.Withdraw(db, filerName, amount)
 					if err != nil {
 						println("fail to withdraw")
@@ -69,6 +70,8 @@ func main() {
 					}
 					filerName := c.Args().Get(0)
 					amount := c.Args().Get(1)
+
+					println("try deposit " + amount + " FIL for " + filerName + "...")
 					err := service.Deposit(db, filerName, amount)
 					if err != nil {
 						println("fail to deposit")
@@ -83,6 +86,7 @@ func main() {
 				Aliases: []string{"l"},
 				Usage:   "list income",
 				Action: func(c *cli.Context) error {
+					println("try get income list...")
 					err := service.QueryIncomeList(db)
 					if err != nil {
 						println("fail to get income list")
