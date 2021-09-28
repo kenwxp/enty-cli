@@ -1,6 +1,8 @@
 package main
 
 import (
+	"entysquare/enty-cli/service"
+	"entysquare/enty-cli/storage"
 	"fmt"
 	"github.com/urfave/cli/v2"
 	"os"
@@ -8,12 +10,11 @@ import (
 )
 
 func main() {
-	//var localhost bool
-	//db, err := storage.NewDatabase(localhost)
-	//if err != nil {
-	//	fmt.Println("err:", err)
-	//	panic("db failed init")
-	//}
+	db, err := storage.NewDatabase()
+	if err != nil {
+		fmt.Println("err:", err)
+		panic("db failed init")
+	}
 	app := &cli.App{
 		Commands: []*cli.Command{
 			{
@@ -25,24 +26,55 @@ func main() {
 						println("amount required")
 						return nil
 					}
-					filerId := c.Args().Get(0)
+					filerName := c.Args().Get(0)
 					amount := c.Args().Get(1)
-					println("add order " + amount + " nanofil for" + filerId)
+					println("add order " + amount + " nanofil for" + filerName)
+					err := service.InsertOrder(db, filerName, amount)
+					if err != nil {
+						println("fail to add order")
+						return err
+					}
+					println("add order success")
 					return nil
 				},
 			},
 			{
 				Name:    "withdraw",
 				Aliases: []string{"w"},
-				Usage:   "withdraw fil (nanofil)",
+				Usage:   "withdraw fil ",
 				Action: func(c *cli.Context) error {
 					if c.NArg() <= 0 {
 						println("amount required")
 						return nil
 					}
-					filerId := c.Args().Get(0)
+					filerName := c.Args().Get(0)
 					amount := c.Args().Get(1)
-					println("withdraw  " + amount + " nanofil for" + filerId)
+					err := service.Withdraw(db, filerName, amount)
+					if err != nil {
+						println("fail to withdraw")
+						return err
+					}
+					println("withdraw success")
+					return nil
+				},
+			},
+			{
+				Name:    "deposit",
+				Aliases: []string{"d"},
+				Usage:   "deposit fil",
+				Action: func(c *cli.Context) error {
+					if c.NArg() <= 0 {
+						println("amount required")
+						return nil
+					}
+					filerName := c.Args().Get(0)
+					amount := c.Args().Get(1)
+					err := service.Deposit(db, filerName, amount)
+					if err != nil {
+						println("fail to deposit")
+						return err
+					}
+					println("deposit success")
 					return nil
 				},
 			},
@@ -51,14 +83,18 @@ func main() {
 				Aliases: []string{"l"},
 				Usage:   "list income",
 				Action: func(c *cli.Context) error {
-					println("list income ")
+					err := service.QueryIncomeList(db)
+					if err != nil {
+						println("fail to get income list")
+						return err
+					}
 					return nil
 				},
 			},
 		},
 	}
 	sort.Sort(cli.CommandsByName(app.Commands))
-	err := app.Run(os.Args)
+	err = app.Run(os.Args)
 	if err != nil {
 		fmt.Println("err", err)
 	}

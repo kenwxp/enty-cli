@@ -115,12 +115,44 @@ const selectFilerBalanceIncomeListByFilerIdSQL = "" +
 	"  where filer_id = $1 " +
 	"  order by stat_time desc "
 
+const updateFilerBalanceIncomeByUuidSQL = "" +
+	" update filer_balance_income" +
+	" set balance = $1," +
+	"	  update_time = $2" +
+	" where uu_id = $3"
+
+const selectLatestBalanceListForEachFilerSQL = "" +
+	" select t.filer_id," +
+	"        t.filer_name," +
+	"        t.pledge_sum," +
+	"        t.hold_power," +
+	"        t.total_income," +
+	"        t.total_available_income," +
+	"        t.balance," +
+	"        t.update_time" +
+	" from (" +
+	"          select i.filer_id," +
+	"                 a.filer_name," +
+	"                 i.pledge_sum," +
+	"                 i.hold_power," +
+	"                 i.total_income," +
+	"                 i.total_available_income," +
+	"                 i.balance," +
+	"                 i.update_time," +
+	"                 row_number() over (partition by i.filer_id order by i.stat_time desc) rownum" +
+	"          from filer_balance_income i," +
+	"               filer_account_info a" +
+	"          where i.filer_id = a.filer_id) t" +
+	" where t.rownum = 1"
+
 type filerBalanceIncomeStatements struct {
 	selectFilerBalanceIncomeByStatTimeStmt    *sql.Stmt
 	insertFilerBalanceIncomeStmt              *sql.Stmt
 	deleteFilerBalanceIncomeFromStatTimeStmt  *sql.Stmt
 	selectFilerBalanceIncomeByFilerIdStmt     *sql.Stmt
 	selectFilerBalanceIncomeListByFilerIdStmt *sql.Stmt
+	updateFilerBalanceIncomeByUuidStmt        *sql.Stmt
+	selectLatestBalanceListForEachFilerStmt   *sql.Stmt
 }
 
 func (s *filerBalanceIncomeStatements) execSchema(db *sql.DB) error {
@@ -145,12 +177,19 @@ func (s *filerBalanceIncomeStatements) prepare(db *sql.DB) (err error) {
 	if s.selectFilerBalanceIncomeListByFilerIdStmt, err = db.Prepare(selectFilerBalanceIncomeListByFilerIdSQL); err != nil {
 		return
 	}
+	if s.updateFilerBalanceIncomeByUuidStmt, err = db.Prepare(updateFilerBalanceIncomeByUuidSQL); err != nil {
+		return
+	}
+
+	if s.selectLatestBalanceListForEachFilerStmt, err = db.Prepare(selectLatestBalanceListForEachFilerSQL); err != nil {
+		return
+	}
 	return
 }
 
 func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeByStatTime(ctx context.Context, txn *sql.Tx, statTime string, filerId string) ([]types.FilerBalanceIncome, error) {
 	var list []types.FilerBalanceIncome
-	row, err := txn.Stmt(s.selectFilerBalanceIncomeByStatTimeStmt).QueryContext(ctx, filerId, statTime)
+	row, err := util.TxStmt(txn, s.selectFilerBalanceIncomeByStatTimeStmt).QueryContext(ctx, filerId, statTime)
 	defer row.Close()
 	if err != nil {
 		fmt.Print("selectStatisticBlockInfo error:", err)
@@ -255,7 +294,8 @@ func (s *filerBalanceIncomeStatements) selectFilerBalanceIncomeListByFilerId(ctx
 
 func (s *filerBalanceIncomeStatements) insertFilerBalanceIncome(ctx context.Context, txn *sql.Tx, f *types.FilerBalanceIncome) (err error) {
 	f.CreateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
-	_, err = txn.Stmt(s.insertFilerBalanceIncomeStmt).
+	f.UpdateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
+	_, err = util.TxStmt(txn, s.insertFilerBalanceIncomeStmt).
 		ExecContext(ctx, //uuid
 			f.FilerId,
 			f.PledgeSum,
@@ -282,4 +322,46 @@ func (s *filerBalanceIncomeStatements) deleteFilerBalanceIncomeFromStatTime(ctx 
 		return err
 	}
 	return
+}
+
+func (s *filerBalanceIncomeStatements) updateFilerBalanceIncomeByUuid(ctx context.Context, txn *sql.Tx, f *types.FilerBalanceIncome) (err error) {
+	f.UpdateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
+	r, err := util.TxStmt(txn, s.updateFilerBalanceIncomeByUuidStmt).
+		ExecContext(ctx, //uuid
+			f.Balance,
+			f.UpdateTime,
+			f.Uuid,
+		)
+	if i, _ := r.RowsAffected(); i < 1 {
+		return fmt.Errorf("db No data was updated")
+	}
+	return
+}
+
+func (s *filerBalanceIncomeStatements) selectLatestBalanceListForEachFiler(ctx context.Context, txn *sql.Tx) ([]types.FilerBalanceIncome, error) {
+	var list []types.FilerBalanceIncome
+	row, err := util.TxStmt(txn, s.selectLatestBalanceListForEachFilerStmt).QueryContext(ctx)
+	defer row.Close()
+	if err != nil {
+		fmt.Print("selectLatestBalanceListForEachFiler error:", err)
+		return nil, err
+	}
+	for row.Next() {
+		var item types.FilerBalanceIncome
+		err := row.Scan(
+			&item.FilerId,
+			&item.FilerName,
+			&item.PledgeSum,
+			&item.HoldPower,
+			&item.TotalIncome,
+			&item.TotalAvailableIncome,
+			&item.Balance,
+			&item.UpdateTime,
+		)
+		if err != nil {
+			return nil, err
+		}
+		list = append(list, item)
+	}
+	return list, nil
 }

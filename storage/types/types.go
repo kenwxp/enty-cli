@@ -166,6 +166,7 @@ type FilerAccountIncome struct {
 type FilerBalanceIncome struct {
 	Uuid                 string //uu_id
 	FilerId              string //filer id
+	FilerName            string
 	PledgeSum            string //质押金额
 	HoldPower            string //持有算力
 	TotalIncome          string //总收益

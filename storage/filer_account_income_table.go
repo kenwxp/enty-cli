@@ -91,7 +91,7 @@ const deleteFilerAccountIncomeFromStatTimeSQL = "" +
 const selectStatisticBalanceIncomeSQL = "" +
 	" select t.filer_id," +
 	"        sum(t.pledge_sum::int8)," +
-	"        sum(t.hold_power::int8)," +
+	"        sum(t.hold_power::float8)," +
 	"        sum(t.total_income::int8)," +
 	"        sum(t.freeze_income::int8)," +
 	"        sum(t.total_available_income::int8)," +

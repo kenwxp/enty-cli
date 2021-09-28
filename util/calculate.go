@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"reflect"
 	"strconv"
@@ -41,9 +42,9 @@ func CalculateString(x string, y string, operator string) (i string) {
 		ai, xErr := strconv.Atoi(x)
 		bi, yErr := strconv.Atoi(y)
 		if xErr != nil || yErr != nil {
-			fmt.Println("err:", xErr)
-			fmt.Println("err:", yErr)
-			panic("error in trans string into int")
+			fmt.Println("err:", x)
+			fmt.Println("err:", y)
+			panic("smaller number sub bigger number")
 		}
 		if ai < bi {
 			panic("wrong order")
@@ -95,7 +96,9 @@ func CalculateString(x string, y string, operator string) (i string) {
 		return i
 	case "subBigFU":
 		if xbf.Cmp(ybf) < 0 {
-			panic("wrong order")
+			fmt.Println("err:", x)
+			fmt.Println("err:", y)
+			panic("smaller number sub bigger number")
 		}
 		ibf := xbf.Sub(xbf, ybf)
 		i = ibf.Text('f', 18)
@@ -117,7 +120,9 @@ func CalculateString(x string, y string, operator string) (i string) {
 		return i
 	case "subBigFH":
 		if xbf.Cmp(ybf) < 0 {
-			panic("wrong order")
+			fmt.Println("err:", x)
+			fmt.Println("err:", y)
+			panic("smaller number sub bigger number")
 		}
 		ibf := xbf.Sub(xbf, ybf)
 		i = ibf.Text('f', 2)
@@ -230,18 +235,19 @@ func MultiplicationPrec0(args ...interface{}) string {
 }
 
 func StrNanoFILToFilStr(nanoFilStr string, num string) string {
+	rs := []rune(nanoFilStr)
+	spec, err := strconv.Atoi(num)
+	if err != nil {
+		panic("StrNanoFILToFilStr params is not a number=>" + num)
+	}
+	rmBit := len(rs) - (9 - spec)
+	nanoFilStr = string(rs[0:rmBit])
 	float, err := strconv.ParseFloat(nanoFilStr, 64)
 	if err != nil {
 		return ""
 	}
-	return fmt.Sprintf("%."+num+"f", float/1000000000.0)
-}
-func StrNanoFILToFilStr8(nanoFilStr string) string {
-	float, err := strconv.ParseFloat(nanoFilStr, 64)
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("%.8f", float/1000000000000000000.0)
+	pow := math.Pow10(spec)
+	return fmt.Sprintf("%."+num+"f", float/pow)
 }
 
 /*float64String to int64string*/

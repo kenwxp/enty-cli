@@ -85,7 +85,7 @@ const selectFilerOrderIncomeByOrderIdSQL = "" +
 
 const selectStatisticOrderIncomeByNodeIdSQL = "" +
 	" select t.filer_id," +
-	"        sum(t.hold_power::int8)," +
+	"        sum(t.hold_power::float8)," +
 	"        sum(t.pay_amount::int8)," +
 	"        sum(t.total_income::int8)," +
 	"        sum(t.freeze_income::int8)," +

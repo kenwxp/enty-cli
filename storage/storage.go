@@ -158,7 +158,7 @@ func NewDatabase() (*Database, error) {
 	return d, nil
 }
 
-func (d *Database) SelectAccountByToken(ctx context.Context, txn *sql.Tx, name string) (account *types.FilerAccountInfo, err error) {
+func (d *Database) SelectAccountByName(ctx context.Context, txn *sql.Tx, name string) (account *types.FilerAccountInfo, err error) {
 	account, err = d.filerAccount.selectAccountByName(ctx, txn, name)
 	if err != nil {
 		return
@@ -386,8 +386,14 @@ func (d *Database) SelectFilerBalanceIncomeByStatTime(ctx context.Context, txn *
 }
 
 func (d *Database) InsertFilerBalanceIncome(ctx context.Context, txn *sql.Tx, f *types.FilerBalanceIncome) (err error) {
-
 	return d.filerBalanceIncome.insertFilerBalanceIncome(ctx, txn, f)
+}
+func (d *Database) UpdateFilerBalanceIncomeByUuid(ctx context.Context, txn *sql.Tx, f *types.FilerBalanceIncome) (err error) {
+	return d.filerBalanceIncome.updateFilerBalanceIncomeByUuid(ctx, txn, f)
+}
+
+func (d *Database) SelectLatestBalanceListForEachFiler(ctx context.Context, txn *sql.Tx) ([]types.FilerBalanceIncome, error) {
+	return d.filerBalanceIncome.selectLatestBalanceListForEachFiler(ctx, txn)
 }
 
 func (d *Database) DeleteFilerBalanceIncomeFromStatTime(ctx context.Context, txn *sql.Tx, statTime string) (err error) {

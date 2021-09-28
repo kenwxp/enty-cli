@@ -210,7 +210,7 @@ func (s *filerOrderStatements) selectOrderListByFilerId(ctx context.Context, txn
 }
 func (s *filerOrderStatements) insertFilerOrder(ctx context.Context, txn *sql.Tx, item *types.FilerOrder) (err error) {
 	item.UpdateTime = strconv.FormatInt(util.TimeNow().Unix(), 10)
-	_, err = txn.Stmt(s.insertOrderStmt).
+	r, err := util.TxStmt(txn, s.insertOrderStmt).
 		ExecContext(ctx, //uuid
 			&item.FilerId,
 			&item.PayFlow,
@@ -223,6 +223,13 @@ func (s *filerOrderStatements) insertFilerOrder(ctx context.Context, txn *sql.Tx
 			&item.EndTime,
 			&item.OrderState,
 		)
+	if err != nil {
+		println("err:", err)
+		return err
+	}
+	if i, _ := r.RowsAffected(); i < 1 {
+		return fmt.Errorf("db No data was inserted")
+	}
 	return
 }
 

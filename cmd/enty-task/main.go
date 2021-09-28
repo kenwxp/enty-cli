@@ -13,4 +13,5 @@ func main() {
 		panic("db failed init")
 	}
 	schedule.StatisticTask(db) // run statistic schedule
+	select {}
 }

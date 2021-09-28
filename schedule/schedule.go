@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"entysquare/enty-cli/chain"
-	"entysquare/enty-cli/chain/filecoin"
 	"entysquare/enty-cli/storage"
 	"entysquare/enty-cli/storage/types"
 	"entysquare/enty-cli/util"
@@ -48,10 +47,10 @@ func StatisticTask(db *storage.Database) {
 	go AutoScheduleRun(db)
 
 	// 3. set up ht fil node dataset auto inject
-	go filecoin.ScanMiner(db)
+	//go filecoin.ScanMiner(db)
 
 	//4. set FilNodeUrlPowers line chart data
-	go chain.SetFilNodeUrlPowersServer(db)
+	// go chain.SetFilNodeUrlPowersServer(db)
 }
 
 func AutoUpdateBlockTable(db *storage.Database) {
