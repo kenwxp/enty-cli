@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	host     = "127.0.0.1"
+	host = "127.0.0.1"
+	//host     = "156.240.109.163"
 	port     = 5532
 	user     = "entycli"
 	password = "entycli666"

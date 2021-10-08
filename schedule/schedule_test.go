@@ -1,15 +1,16 @@
 package schedule
 
 import (
+	"entysquare/enty-cli/storage"
+	"fmt"
 	_ "github.com/lib/pq"
 	"testing"
-	"time"
 )
 
 func TestStatisticMethod(t *testing.T) {
-	//db, err := storage.NewDatabase(true)
-	//fmt.Println(db)
-	//fmt.Println(err)
+	db, err := storage.NewDatabase()
+	fmt.Println(db)
+	fmt.Println(err)
 	//统计时间为当天执行时最早时间 的前一天
 	// (当天-2021-09-01)
 	//duration := -1
@@ -17,7 +18,7 @@ func TestStatisticMethod(t *testing.T) {
 	//ctx :=context.TODO()
 
 	//scheduleExecute(db, statTime, nodeId)
-	//ManualScheduleRun(db, "2021-09-01", "")
+	ManualScheduleRun(db, "2021-09-22", "")
 	//err = statisticBlockInfo(db, statTime)
 	//err = statisticOrderIncome(db, statTime)
 	//err = statisticAccountIncome(db, statTime)
@@ -28,9 +29,9 @@ func TestStatisticMethod(t *testing.T) {
 	//	return nil
 	//})
 	//AutoScheduleRun(db)
-	ts := time.Unix(1632654671, 0).AddDate(0, 0, 539).Format("2006-01-02")
+	//ts := time.Unix(1632654671, 0).AddDate(0, 0, 539).Format("2006-01-02")
 
-	println(ts)
+	//println(ts)
 }
 
 //ts,1672485071

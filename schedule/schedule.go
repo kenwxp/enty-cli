@@ -799,14 +799,14 @@ func statisticPoolIncome(db *storage.Database, ctx context.Context, txn *sql.Tx,
 		addPool = types.NewFilerPoolIncome()
 	}
 	addPool.NodeId = nodeId
-	addPool.Balance = util.Addition(addPool.Balance, available, release180)                        // 余额 += 今25% + 线性释放
-	addPool.TotalIncome = util.Addition(addPool.TotalIncome, available, lock)                      //总收益 += 今天100%
-	addPool.AvailableIncome = util.Addition(addPool.AvailableIncome, available, release180)        //可用收益 += 今25% + 线性释放
-	addPool.FreezeIncome = util.Subtraction(util.Addition(addPool.FreezeIncome, lock), release180) //冻结收益 += 今75% - 线性释放
-	addPool.TodayIncomeTotal = util.Addition(available, lock)                                      //今日产出收益 = 今天100%
-	addPool.TodayIncomeFreeze = util.Addition(lock)                                                //今日冻结收益 = 今天75%
-	addPool.TodayIncomeAvailable = util.Addition(available, release180)                            //今日可用收益 = 今天25% + 线性释放
-	addPool.StatTime = statTimeStr                                                                 //统计时间（yyyy-MM-dd）
+	addPool.Balance = util.FSToIS(util.Addition(addPool.Balance, available, release180))                        // 余额 += 今25% + 线性释放
+	addPool.TotalIncome = util.FSToIS(util.Addition(addPool.TotalIncome, available, lock))                      //总收益 += 今天100%
+	addPool.AvailableIncome = util.FSToIS(util.Addition(addPool.AvailableIncome, available, release180))        //可用收益 += 今25% + 线性释放
+	addPool.FreezeIncome = util.FSToIS(util.Subtraction(util.Addition(addPool.FreezeIncome, lock), release180)) //冻结收益 += 今75% - 线性释放
+	addPool.TodayIncomeTotal = util.FSToIS(util.Addition(available, lock))                                      //今日产出收益 = 今天100%
+	addPool.TodayIncomeFreeze = util.FSToIS(util.Addition(lock))                                                //今日冻结收益 = 今天75%
+	addPool.TodayIncomeAvailable = util.FSToIS(util.Addition(available, release180))                            //今日可用收益 = 今天25% + 线性释放
+	addPool.StatTime = statTimeStr                                                                              //统计时间（yyyy-MM-dd）
 	if len(blocks) > 0 {
 		addPool.TotalPower = blocks[len(blocks)-1].Power //总算力
 	} else {
