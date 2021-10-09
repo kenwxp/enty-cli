@@ -12,23 +12,24 @@ import (
 	"time"
 )
 
-func InsertOrder(db *storage.Database, name string, hold string) error {
+func InsertOrder(db *storage.Database, name string, power string) error {
 	ctx := context.TODO()
 	filerId, err := GetFilerIdByName(db, ctx, name)
 	if err != nil {
 		println("InsertOrder => GetFilerIdByName => err:", err)
 		return err
 	}
-	nanoAmount := util.FSToIS(util.CalculateString(hold, "5160000000", "mulBigF")) // 设置算力售价为5.16Fil/T
+	nanoRate := getNanoTiBRate() //设置算力售价为5.16Fil/T
+	nanoAmount := util.FSToIS(util.CalculateString(power, nanoRate, "mulBigF"))
 	createTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
 	updateTime := strconv.FormatInt(util.TimeNow().Unix(), 10)
 	validTime := strconv.FormatInt(util.TimeNow().AddDate(0, 0, 1).Unix(), 10) //设置T+1生效
 	EndTime := strconv.FormatInt(util.TimeNow().AddDate(0, 0, 540).Unix(), 10) //结束日期为T+1+(540-1)
 	orderInfo := types.FilerOrder{
 		FilerId:    filerId,
-		PayFlow:    "",
+		PayFlow:    "manual insert..",
 		ProductId:  "91fb8ea2-d435-4709-b933-1f7057b7f9ef", //使用确定产品下单
-		HoldPower:  hold,
+		HoldPower:  power,
 		PayAmount:  nanoAmount,
 		OrderTime:  createTime,
 		UpdateTime: updateTime,

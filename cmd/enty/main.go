@@ -20,16 +20,16 @@ func main() {
 			{
 				Name:    "add",
 				Aliases: []string{"a"},
-				Usage:   "add order",
+				Usage:   "add order,for example: enty add who TiB",
 				Action: func(c *cli.Context) error {
 					if c.NArg() <= 0 {
 						println("amount required")
 						return nil
 					}
 					filerName := c.Args().Get(0)
-					amount := c.Args().Get(1)
-					println("try add order " + amount + " Tib for " + filerName + "...")
-					err := service.InsertOrder(db, filerName, amount)
+					power := c.Args().Get(1)
+					println("try add order " + power + " Tib for " + filerName + "...")
+					err := service.InsertOrder(db, filerName, power)
 					if err != nil {
 						println("fail to add order")
 						return err
@@ -41,7 +41,7 @@ func main() {
 			{
 				Name:    "withdraw",
 				Aliases: []string{"w"},
-				Usage:   "withdraw fil ",
+				Usage:   "withdraw fil,for example: enty withdraw who Fil ",
 				Action: func(c *cli.Context) error {
 					if c.NArg() <= 0 {
 						println("amount required")
@@ -62,7 +62,7 @@ func main() {
 			{
 				Name:    "deposit",
 				Aliases: []string{"d"},
-				Usage:   "deposit fil",
+				Usage:   "deposit fil,for example: enty deposit who Fil",
 				Action: func(c *cli.Context) error {
 					if c.NArg() <= 0 {
 						println("amount required")
@@ -84,7 +84,7 @@ func main() {
 			{
 				Name:    "list",
 				Aliases: []string{"l"},
-				Usage:   "list income",
+				Usage:   "list income,for example: enty list",
 				Action: func(c *cli.Context) error {
 					println("try get income list...")
 					err := service.QueryIncomeList(db)
