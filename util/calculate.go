@@ -241,13 +241,17 @@ func StrNanoFILToFilStr(nanoFilStr string, num string) string {
 		panic("StrNanoFILToFilStr params is not a number=>" + num)
 	}
 	rmBit := len(rs) - (9 - spec)
-	nanoFilStr = string(rs[0:rmBit])
-	float, err := strconv.ParseFloat(nanoFilStr, 64)
-	if err != nil {
+	if rmBit >= 0 {
+		nanoFilStr = string(rs[0:rmBit])
+		float, err := strconv.ParseFloat(nanoFilStr, 64)
+		if err != nil {
+			return "0"
+		}
+		pow := math.Pow10(spec)
+		return fmt.Sprintf("%."+num+"f", float/pow)
+	} else {
 		return "0"
 	}
-	pow := math.Pow10(spec)
-	return fmt.Sprintf("%."+num+"f", float/pow)
 }
 
 /*float64String to int64string*/

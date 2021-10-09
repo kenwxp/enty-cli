@@ -174,11 +174,13 @@ func QueryIncomeList(db *storage.Database) error {
 		fmt.Println("QueryIncomeList =>SelectLatestBalanceListForEachFiler => err:", err)
 		return err
 	}
+	nanoRate := getNanoTiBRate()
 	if len(balanceList) > 0 {
-		fmt.Println("|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|")
-		fmt.Println("|\t用户名\t|\t持有算力\t|\t总收益\t|\t已释放收益\t|\t可用余额\t|\t修改时间\t|")
-		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
+		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
+		fmt.Println("|\t用户名\t|\t持有算力\t|\t有效质押\t|\t总收益\t|\t已释放收益\t|\t可用余额\t|\t修改日期\t|\t修改时间\t|")
+		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
 		sumPower := "0"
+		sumPledge := "0"
 		sumTotalIncome := "0"
 		sumAvailable := "0"
 		sumBalance := "0"
@@ -186,6 +188,9 @@ func QueryIncomeList(db *storage.Database) error {
 		for _, balanceInfo := range balanceList {
 			power := balanceInfo.HoldPower
 			sumPower = util.CalculateString(sumPower, power, "addBigFH")
+
+			pledge := util.FSToIS(util.CalculateString(nanoRate, power, "mulBigF"))
+			sumPledge = util.FSToIS(util.CalculateString(sumPledge, pledge, "addBigFH"))
 
 			totalIncome := util.StrNanoFILToFilStr(balanceInfo.TotalIncome, "4")
 			sumTotalIncome = util.FSToIS(util.CalculateString(sumTotalIncome, balanceInfo.TotalIncome, "addBigFH"))
@@ -200,25 +205,31 @@ func QueryIncomeList(db *storage.Database) error {
 			if err != nil {
 				updateTs = 0
 			}
-			updateTime := time.Unix(updateTs, 0).Format("2006-01-02 15:04:05")
+			updateTime_pre := time.Unix(updateTs, 0).Format("2006-01-02")
+			updateTime_suf := time.Unix(updateTs, 0).Format("15:04:05")
 
 			fmt.Println("" +
 				"|\t" + balanceInfo.FilerName + "\t" +
 				"|\t" + power + "\t" +
+				"|\t" + util.StrNanoFILToFilStr(pledge, "4") + "\t" +
 				"|\t" + totalIncome + "\t" +
 				"|\t" + available + "\t" +
 				"|\t" + balance + "\t" +
-				"|\t" + updateTime + "\t|")
+				"|\t" + updateTime_pre + "\t" +
+				"|\t" + updateTime_suf + "\t|",
+			)
 		}
-		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
+		fmt.Println("|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|\t------------\t|")
 		fmt.Println("" +
 			"|\t" + "SUM:" + "\t" +
 			"|\t" + sumPower + "\t" +
+			"|\t" + util.StrNanoFILToFilStr(sumPledge, "4") + "\t" +
 			"|\t" + util.StrNanoFILToFilStr(sumTotalIncome, "4") + "\t" +
 			"|\t" + util.StrNanoFILToFilStr(sumAvailable, "4") + "\t" +
 			"|\t" + util.StrNanoFILToFilStr(sumBalance, "4") + "\t" +
-			"|\t" + "" + "\t|")
-		fmt.Println("|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|")
+			"|\t" + util.TimeNow().Format("2006-01-02") + "\t" +
+			"|\t" + util.TimeNow().Format("15:04:05") + "\t|")
+		fmt.Println("|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|\t============\t|")
 	} else {
 		fmt.Println(" ------> no result <------", err)
 	}
@@ -233,4 +244,10 @@ func GetFilerIdByName(db *storage.Database, ctx context.Context, name string) (s
 		return "", errors.New("user is not exist")
 	}
 	return account.FilerId, nil
+}
+func getNanoTiBRate() string {
+	initialPledge := "2114.4350"
+	adjustedPower := "425.00"
+	nanoPledge := util.CalculateString(initialPledge, "1000000000", "mulBigF")
+	return util.FSToIS(util.CalculateString(nanoPledge, adjustedPower, "divBigF"))
 }
